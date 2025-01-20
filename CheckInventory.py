@@ -1,12 +1,16 @@
 from tkinter import *
 import tkinter as tk
 from PIL import Image, ImageTk
+from Utils import Utils
 
-class CashInventory:
+
+class CashInventory(Utils):
     def __init__(self, root, remaining):
         self.root = root
-        self.root.title("Change Inventory")
-        self.root.geometry("950x600")
+        super().__init__(root, "Check Inventory") 
+        super().setup_background()
+        super().setup_fonts()
+
         
         # setup current values
         self.remaining = remaining
@@ -15,7 +19,6 @@ class CashInventory:
         self.setup_fonts()
         
         # Setup main components
-        self.setup_background()
         self.setup_check_inventory_label()
         self.setup_history_frame()
         self.setup_cash_inventory_frame()
@@ -26,28 +29,7 @@ class CashInventory:
         
         # Populate initial data
         self.populate_history()
-
-    def setup_fonts(self):
-        self.font_small = ("Asap Condensed", 10)
-        self.font_medium = ("Asap Condensed", 15)
-        self.font_big = ("Asap Condensed", 20)
-        self.font_small_bold = ("Asap Condensed", 12, "bold")
-        self.font_medium_bold = ("Asap Condensed", 15, "bold")
-        self.font_big_bold = ("Asap Condensed", 20, "bold")
-        self.font_large_bold = ("Asap Condensed", 25, "bold")
-        self.font_small_italic = ("Asap Condensed", 10, "italic")
     
-    def setup_background(self):
-        try:
-            background_image = Image.open("pictures/Background.png")
-            background_image = background_image.resize((950, 600), Image.Resampling.LANCZOS)
-            self.bg_image = ImageTk.PhotoImage(background_image)  # Keep reference
-            background_label = tk.Label(self.root, image=self.bg_image)
-            background_label.place(relwidth=1, relheight=1)
-        except Exception as e:
-            print(f"Error loading background image: {e}")
-            # Fallback background color
-            self.root.configure(bg='#f0f0f0')
     def setup_check_inventory_label(self):
         #check inventory label
         check_inventory_image = Image.open("pictures/CheckInventory.png")
@@ -160,14 +142,11 @@ class CashInventory:
                 counter = 0
             self.create_cash_drawer_inventory_item(row, column, x, remaining[x])
             row += 1
-
-
-            
-                
+    
     def setup_return_button(self):
         return_button = tk.Button(
             self.root,
-            text="< Return",
+            text="<  Return",
             height=1,
             width=21,
             font=self.font_medium_bold,

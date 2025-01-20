@@ -1,22 +1,20 @@
 from tkinter import *
 import tkinter as tk
 from PIL import Image, ImageTk
+from Utils import Utils
 
-class MainMenuApp:
-    def __init__(self, root):
+class MainMenuApp(Utils):
+    def __init__(self, root, values):
         self.root = root
-        self.root.title("Main Menu")
-        self.root.geometry("950x600")
+        super().__init__(root, "Main Menu") 
+
+
         
         # Initialize font
         self.font = ("Poppins", 12, "bold")
         
-        # Store PhotoImage references
-        self.photos = []
-        self.background_image = None
-        
+        self.photos = []        
         # Setup UI components
-        self.setup_background()
         self.load_button_images()
         self.create_buttons()
         
@@ -29,19 +27,7 @@ class MainMenuApp:
         except Exception as e:
             print(f"Error loading image {path}: {e}")
             return None
-            
-    def setup_background(self):
-        """Setup the background image"""
-        try:
-            background_image = Image.open("pictures/Background.png")
-            background_image = background_image.resize((950, 600), Image.Resampling.LANCZOS)
-            self.background_image = ImageTk.PhotoImage(background_image)
-            background_label = tk.Label(self.root, image=self.background_image)
-            background_label.place(relwidth=1, relheight=1)
-        except Exception as e:
-            print(f"Error loading background image: {e}")
-            self.root.configure(bg='#f0f0f0')  # Fallback background color
-            
+                    
     def load_button_images(self):
         """Load and store button images"""
         image_paths = [
