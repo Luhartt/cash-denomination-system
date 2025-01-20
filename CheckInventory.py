@@ -8,6 +8,9 @@ class CashInventory:
         self.root.title("Change Inventory")
         self.root.geometry("950x600")
         
+        # setup current values
+        self.remaining = remaining
+
         # Initialize fonts
         self.setup_fonts()
         
@@ -23,7 +26,6 @@ class CashInventory:
         
         # Populate initial data
         self.populate_history()
-        self.remaining = remaining
 
     def setup_fonts(self):
         self.font_small = ("Asap Condensed", 10)
@@ -109,21 +111,23 @@ class CashInventory:
                                        text="CASH DRAWER INVENTORY",
                                        font=self.font_big_bold
                                     )    
-        cash_drawer_heading.place(relx=0.5, y = 10, anchor="n")
+        cash_drawer_heading.place(relx=0.5, y = 15, anchor="n")
         
     def setup_total_cash(self):
-        amount = 1000.32
+        total = 0;
+        for x in self.remaining:
+            total+= x * remaining[x];
         total_cash = tk.Label(self.cash_inventory_frame, 
                                        bg="white",
                                        fg="#3f2622", 
-                                       text=f"P {amount}",
-                                       font=self.font_large_bold
+                                       text=f"P {total}",
+                                       font=self.font_big_bold
                                     )    
-        total_cash.place(relx=0.5,rely=0.85, anchor="n")
+        total_cash.place(relx=0.5,rely=0.87, anchor="n")
         
     def create_cash_drawer_inventory_item(self, rw, col, type, amount):
         cash_inventory_item_frame = tk.Frame(self.cash_inventory_contents, bg="white")
-        cash_inventory_item_frame.grid(row = rw, column=col, padx=25, pady=10)
+        cash_inventory_item_frame.grid(row = rw, column=col, padx=25, pady=5)
         cash_inventory_type = tk.Label(cash_inventory_item_frame, 
                                        text=f"{type}  X  ", 
                                        fg="#3f2622",
@@ -145,11 +149,20 @@ class CashInventory:
         cash_inventory_amount.grid(column=1, row=0)
         
     def setup_cash_drawer_items(self):
-        column = 2
-        row = 5
-        for col in range(column):
-            for rw in range(row):
-                self.create_cash_drawer_inventory_item(rw, col, "1000", "2")
+        column = 0
+        row = 0
+        counter = 0;
+        for x in self.remaining:
+            counter+=1
+            if(counter == 7):
+                column += 1
+                row = 0
+                counter = 0
+            self.create_cash_drawer_inventory_item(row, column, x, remaining[x])
+            row += 1
+
+
+            
                 
     def setup_return_button(self):
         return_button = tk.Button(
