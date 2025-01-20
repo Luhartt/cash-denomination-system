@@ -2,6 +2,8 @@ from tkinter import *
 import tkinter as tk
 from PIL import Image, ImageTk
 from Utils import Utils
+from ProcessPaymentMain import ProcessPaymentMain
+from CheckInventory import CashInventory
 
 class MainMenuApp(Utils):
     def __init__(self, root):
@@ -106,18 +108,44 @@ class MainMenuApp(Utils):
             
     def on_process_payment(self):
         """Handle process payment button click"""
-        print("Process Payment clicked")
-        # Add your process payment logic here
+        self.root.withdraw()  # Hide the main menu window
+        values = [
+            1000, 500, 200, 100, 50, 20,
+            10, 5, 1, 0.25, 0.10, 0.5,
+        ]
+        process_payment_window = tk.Toplevel(self.root)
+        ProcessPaymentMain(process_payment_window, values)
+        process_payment_window.protocol("WM_DELETE_WINDOW",  lambda: self.on_close_window(process_payment_window))
         
     def on_check_inventory(self):
         """Handle check inventory button click"""
-        print("Check Inventory clicked")
-        # Add your inventory check logic here
+        self.root.withdraw()  # Hide the main menu window
+        remaining = {
+            1000: 10, 500: 15, 200: 23, 100: 30, 50: 52,
+            20: 56, 10: 100, 5: 140, 1: 200, 0.25: 5,
+            0.10: 3, 0.5: 1
+        }
+        check_inventory_window = tk.Toplevel(self.root)
+        CashInventory(check_inventory_window, remaining, self.root)
+        check_inventory_window.protocol("WM_DELETE_WINDOW",  lambda: self.on_close_window(check_inventory_window))    
+    
 
+    def on_close_window(self, child_window):
+        """Handle closing a child window."""
+        child_window.destroy()
+        self.root.deiconify()  # Show the main menu window again
+        
+    @staticmethod
+    def reopen_main_menu():
+        root = tk.Tk()
+        app = MainMenuApp(root)
+        root.mainloop()
+        
 def main():
-    root = tk.Tk()
-    app = MainMenuApp(root)
-    root.mainloop()
+    
+    MainMenu = tk.Tk()
+    app = MainMenuApp(MainMenu)
+    MainMenu.mainloop()
 
 if __name__ == "__main__":
     main()

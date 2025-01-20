@@ -38,7 +38,7 @@ class Utils:
             self.font_big_bold = ("Asap Condensed", 25, "bold")
             self.font_large_bold = ("Asap Condensed", 30, "bold")
             self.font_small_italic = ("Asap Condensed", 10, "italic")
-
+            
 class SquareFrame:
         def __init__(self, root, values, heading, callback, x, y, editable):
              self.values = values
@@ -172,3 +172,4 @@ class SquareFrame:
             
         def getTotal(self):
             return self.total
+

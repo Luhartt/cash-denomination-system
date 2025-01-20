@@ -159,14 +159,5 @@ class ProcessPaymentMain(Utils):
                 return SquareFrame.getTotal(self.square_frame_process_payment)
 
 
-def main():
-    values = [
-        1000,500,200,100,50,20,
-        10,5,1,0.25,0.10,0.5, 
-        ]
-    root = tk.Tk()
-    app = ProcessPaymentMain(root, values)
-    root.mainloop()
 
-if __name__ == "__main__":
-    main()
+

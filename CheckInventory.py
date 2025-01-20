@@ -2,15 +2,14 @@ from tkinter import *
 import tkinter as tk
 from PIL import Image, ImageTk
 from Utils import Utils
-
-
 class CashInventory(Utils):
-    def __init__(self, root, remaining):
+    def __init__(self, root, remaining, main_window=None):
         self.root = root
         super().__init__(root, "Check Inventory") 
         super().setup_background()
         super().setup_fonts()
 
+        self.main_window = main_window 
         
         # setup current values
         self.remaining = remaining
@@ -98,7 +97,7 @@ class CashInventory(Utils):
     def setup_total_cash(self):
         total = 0;
         for x in self.remaining:
-            total+= x * remaining[x];
+            total+= x * self.remaining[x];
         total_cash = tk.Label(self.cash_inventory_frame, 
                                        bg="white",
                                        fg="#3f2622", 
@@ -140,7 +139,7 @@ class CashInventory(Utils):
                 column += 1
                 row = 0
                 counter = 0
-            self.create_cash_drawer_inventory_item(row, column, x, remaining[x])
+            self.create_cash_drawer_inventory_item(row, column, x, self.remaining[x])
             row += 1
     
     def setup_return_button(self):
@@ -182,25 +181,10 @@ class CashInventory(Utils):
         self.history_canvas.itemconfig(self.canvas_frame, width=width)
     
     def on_return(self):
-        """Handle return button click"""
-        # Add your return logic here
-        print("Return button clicked")
+            """Handle return button click"""
+            self.root.destroy()
+            if self.main_window:
+                self.main_window.deiconify() 
 
-if __name__ == "__main__":
-    remaining = {
-        1000: 10,
-        500: 15,
-        200: 23,
-        100: 30,
-        50: 52,
-        20: 56,
-        10: 100,
-        5: 140,
-        1: 200,
-        0.25: 5,
-        0.10: 3,
-        0.5: 1 
-    }
-    root = tk.Tk()
-    app = CashInventory(root, remaining)
-    root.mainloop()
+
+
