@@ -8,6 +8,7 @@ class Utils:
         self.root = root
         self.root.title(title)
         self.root.geometry("950x600")
+        self.root.resizable(False, False)
 
      def setup_background(self):
         """Setup the background image"""
@@ -24,34 +25,44 @@ class Utils:
      def setup_fonts(self):
             self.font_small = ("Asap Condensed", 10)
             self.font_medium = ("Asap Condensed", 15)
+            self.font_medium_big = ("Asap Condensed", 17)
             self.font_big = ("Asap Condensed", 20)
             self.font_small_bold = ("Asap Condensed", 12, "bold")
             self.font_medium_bold = ("Asap Condensed", 15, "bold")
+            self.font_medium_big_bold = ("Asap Condensed", 18, "bold")
             self.font_big_bold = ("Asap Condensed", 20, "bold")
             self.font_large_bold = ("Asap Condensed", 25, "bold")
             self.font_small_italic = ("Asap Condensed", 10, "italic")
 
 class SquareFrame:
-        def __init__(self, root, values, heading, callback):
+        def __init__(self, root, values, heading, callback, x, y, editable):
              self.values = values
              self.root = root
+             self.frameX = x
+             self.frameY = y
+             self.editable = editable
              self.font_big_bold = ("Asap Condensed", 20, "bold")
              self.font_medium_bold = ("Asap Condensed", 15, "bold")
              self.heading = heading
-             self.amount_vars = {};
-             self.total_var = tk.StringVar();
-             self.total_var.set("P 0.00");
-             self.callback=callback;
-             self.setup_square_frame();
-             self.setup_heading();
-             self.setup_items();
-             self.setup_total();
-             self.setup_proceed_button();
+             self.amount_vars = {}
+             self.total = 0
+             self.total_var = tk.StringVar()
+             self.total_var.set("P 0.00")
+             self.callback=callback
+             self.setup_square_frame()
+             self.setup_heading()
+
+             
+             if(editable):
+              self.setup_editable_items()
+              self.setup_editable_total()
+              self.setup_proceed_button_editable()
+
              
         def setup_square_frame(self):
             self.square_frame = tk.Frame(self.root, bg="white", 
                                             height=450, width=450)
-            self.square_frame.place(relx=0.40, rely=0.1, anchor="nw")
+            self.square_frame.place(relx=self.frameX, rely=self.frameY, anchor="nw")
             
             self.square_contents = tk.Frame(self.square_frame, bg="white", width=450, height=280)
             self.square_contents.place(relx = 0.5, rely = 0.5, anchor="center")
@@ -65,7 +76,7 @@ class SquareFrame:
                                         )    
             heading.place(relx=0.5, y = 15, anchor="n")            
         
-        def create_item(self, row, column, item_type):
+        def create_editable_item(self, row, column, item_type):
             if not hasattr(self, 'validation_command'):
                 self.validation_command = (self.root.register(self.validate_numeric), '%P')
             
@@ -99,10 +110,10 @@ class SquareFrame:
             
             return type_label, amount_entry
 
-        def setup_total(self):
+        def setup_editable_total(self):
             # Create StringVar for total
             self.total_var = tk.StringVar()
-            self.total_var.set("P 0.00")  # Set default value
+            self.total_var.set("₱ 0.00")  # Set default value
             
             self.total_cash = tk.Label(self.square_frame,
                                     bg="white",
@@ -122,13 +133,13 @@ class SquareFrame:
                     pass  
             
             self.total = total
-            self.total_var.set(f"P {total:.2f}")
+            self.total_var.set(f"₱ {total:.2f}")
 
         def validate_numeric(self, value):
             """Validate that input is numeric or empty"""
             return value.isdigit() or value == ""
         
-        def setup_items(self):
+        def setup_editable_items(self):
             column = 0
             row = 0
             counter = 0;
@@ -138,9 +149,9 @@ class SquareFrame:
                     column += 1
                     row = 0
                     counter = 0
-                self.create_item(row, column, x)
+                self.create_editable_item(row, column, x)
                 row += 1
-        def setup_proceed_button(self):
+        def setup_proceed_button_editable(self):
             proceed_button = tk.Button(self.square_frame, 
                                        text="PROCEED", 
                                        bg="#3f2622",
