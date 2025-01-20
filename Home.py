@@ -4,10 +4,10 @@ from PIL import Image, ImageTk
 from Utils import Utils
 
 class MainMenuApp(Utils):
-    def __init__(self, root, values):
+    def __init__(self, root):
         self.root = root
         super().__init__(root, "Main Menu") 
-
+        super().setup_background()
 
         
         # Initialize font

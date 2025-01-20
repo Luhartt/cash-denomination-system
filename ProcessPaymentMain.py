@@ -67,7 +67,8 @@ class ProcessPaymentMain(Utils):
                                            fg="#3f2622", 
                                            width=15,
                                            validate="all",
-                                           validatecommand=self.validation_command,)
+                                           validatecommand=self.validation_command,
+                                           relief="flat")
                 self.input_frame_entry.place(rely = 0.5, relx=0.95, anchor="e")
                 # frame for buttons
                 self.button_frame = tk.Frame(self.calculator_frame, bg="#3f2622", width= 250, height = 220)
