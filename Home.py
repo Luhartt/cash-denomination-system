@@ -11,7 +11,7 @@ class MainMenuApp(Utils):
 
         
         # Initialize font
-        self.font = ("Poppins", 12, "bold")
+        self.font = ("Poppins", 17, "bold")
         
         self.photos = []        
         # Setup UI components
@@ -49,7 +49,7 @@ class MainMenuApp(Utils):
         
     def on_leave(self, button):
         """Mouse leave event handler"""
-        button.config(bg="white")
+        button.config(bg="white", fg="#4d342f")
         
     def create_button(self, text, image, relx, command=None):
         """Create a button with specified parameters"""

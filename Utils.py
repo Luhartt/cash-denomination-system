@@ -1,12 +1,17 @@
 from tkinter import *
 import tkinter as tk
 from PIL import Image, ImageTk
+import platform
 
 class Utils:
     
      def __init__(self, root, title):
         self.root = root
         self.root.title(title)
+        if platform.system() == "Windows":
+            root.tk.call("tk", "scaling", 1.0)
+        elif platform.system() == "Darwin":
+                 root.tk.call("tk", "scaling", 1.2)
         self.root.geometry("950x600")
         self.root.resizable(False, False)
 
@@ -23,15 +28,15 @@ class Utils:
             self.root.configure(bg='#f0f0f0')  # Fallback background color
             
      def setup_fonts(self):
-            self.font_small = ("Asap Condensed", 10)
-            self.font_medium = ("Asap Condensed", 15)
-            self.font_medium_big = ("Asap Condensed", 17)
-            self.font_big = ("Asap Condensed", 20)
-            self.font_small_bold = ("Asap Condensed", 12, "bold")
-            self.font_medium_bold = ("Asap Condensed", 15, "bold")
-            self.font_medium_big_bold = ("Asap Condensed", 18, "bold")
-            self.font_big_bold = ("Asap Condensed", 20, "bold")
-            self.font_large_bold = ("Asap Condensed", 25, "bold")
+            self.font_small = ("Asap Condensed", 15)
+            self.font_medium = ("Asap Condensed", 20)
+            self.font_medium_big = ("Asap Condensed", 23)
+            self.font_big = ("Asap Condensed", 25)
+            self.font_small_bold = ("Asap Condensed", 17, "bold")
+            self.font_medium_bold = ("Asap Condensed", 20, "bold")
+            self.font_medium_big_bold = ("Asap Condensed", 23, "bold")
+            self.font_big_bold = ("Asap Condensed", 25, "bold")
+            self.font_large_bold = ("Asap Condensed", 30, "bold")
             self.font_small_italic = ("Asap Condensed", 10, "italic")
 
 class SquareFrame:
@@ -41,7 +46,8 @@ class SquareFrame:
              self.frameX = x
              self.frameY = y
              self.editable = editable
-             self.font_big_bold = ("Asap Condensed", 20, "bold")
+             self.font_big_bold = ("Asap Condensed", 25, "bold")
+             self.font_large_bold = ("Asap Condensed", 35, "bold")
              self.font_medium_bold = ("Asap Condensed", 15, "bold")
              self.heading = heading
              self.amount_vars = {}
@@ -72,7 +78,7 @@ class SquareFrame:
                                         bg="white",
                                         fg="#3f2622", 
                                         text= self.heading,
-                                        font=self.font_big_bold
+                                        font=self.font_large_bold
                                         )    
             heading.place(relx=0.5, y = 15, anchor="n")            
         
@@ -81,7 +87,7 @@ class SquareFrame:
                 self.validation_command = (self.root.register(self.validate_numeric), '%P')
             
             item_frame = tk.Frame(self.square_contents, bg="white")
-            item_frame.grid(row=row, column=column, padx=25, pady=5)
+            item_frame.grid(row=row, column=column, padx=20, pady=5)
             
             type_label = tk.Label(item_frame,
                                 text=f"{item_type}  X  ",
@@ -118,8 +124,10 @@ class SquareFrame:
             self.total_cash = tk.Label(self.square_frame,
                                     bg="white",
                                     fg="#3f2622",
+                                    pady=0,
+                                    height=1,
                                     textvariable=self.total_var,  
-                                    font=self.font_big_bold)    
+                                    font=self.font_large_bold)    
             self.total_cash.place(relx=0.3, rely=0.87, anchor="n")
 
         def calculate_total(self, *args):
@@ -156,7 +164,8 @@ class SquareFrame:
                                        text="PROCEED", 
                                        bg="#3f2622",
                                        fg="white",
-                                       font=self.font_medium_bold,
+                                       borderwidth=0,
+                                       font=self.font_big_bold,
                                        relief="flat",
                                        command=self.callback)
             proceed_button.place(relx=0.7, rely=0.87, anchor="n")
