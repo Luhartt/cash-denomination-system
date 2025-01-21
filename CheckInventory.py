@@ -2,6 +2,7 @@ from tkinter import *
 import tkinter as tk
 from PIL import Image, ImageTk
 from Utils import Utils
+from transactions import Transactions
 class CashInventory(Utils):
     def __init__(self, root, remaining, main_window=None):
         self.root = root
@@ -33,10 +34,10 @@ class CashInventory(Utils):
         #check inventory label
         check_inventory_image = Image.open("pictures/CheckInventory.png")
         check_inventory_image = check_inventory_image.resize((20, 20), Image.Resampling.LANCZOS)
-        self.check_intenvory_image = ImageTk.PhotoImage(check_inventory_image)
-        self.check_invenvory_label = tk.Label(self.root, 
+        self.check_inventory_image = ImageTk.PhotoImage(check_inventory_image)
+        self.check_inventory_label = tk.Label(self.root, 
                                         text="       Check Inventory",
-                                        image=self.check_invenvory_image, 
+                                        image=self.check_inventory_image, 
                                         font=self.font_small_bold, 
                                         bg="white",
                                         compound="left",
@@ -161,15 +162,18 @@ class CashInventory(Utils):
         label = tk.Label(
             self.history_content,
             text=f"{date}             {amount}",
-            font=self.font_small,
+            font=self.font_small_bold,
             bg="white"
         )
         label.pack(pady=10)
     
     def populate_history(self):
         # Add sample history entries
-        for _ in range(50):
-            self.create_history_label("January 20, 2025", "+600")
+        self.transaction = Transactions()
+        for i, (time, amount) in enumerate(self.transaction.get_transactions()):  
+            self.create_history_label(time, amount)
+
+        # end for
             
     def on_frame_configure(self, event=None):
         """Reset the scroll region to encompass the inner frame"""

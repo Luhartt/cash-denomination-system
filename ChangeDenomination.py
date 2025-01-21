@@ -3,6 +3,8 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from Utils import Utils
 from Utils import SquareFrame
+from transactions import Transactions
+from datetime import datetime
 
 class ChangeDenomination(Utils):
            
@@ -24,15 +26,18 @@ class ChangeDenomination(Utils):
         self.setup_totals(label_text="TOTAL BILL", label_y=0.51, label_x=0.24, total_y=0.65, total_x=0.37, total_text=f"₱  {self.total_bill}")
         self.setup_totals(label_text="TOTAL PAYMENT", label_y=0.76, label_x=0.24, total_y=0.90, total_x=0.37, total_text=f"₱  {self.total_payment}")
         self.setup_process_payment_label()
-        
+        self.add_transaction(self.total_bill)
     def finished_clicked(self):
         self.root.destroy()
         if self.main_window:
                 self.main_window.deiconify() 
+    def add_transaction(self, total_bill):
+        transaction = Transactions()
+        current_time = datetime.now()
+        formatted_time = current_time.strftime("%H:%M")
+        transaction.add_transaction(formatted_time, f"+{total_bill}")
         
     def setup_totals(self, label_x, label_y, total_x, total_y, label_text, total_text):
-        
-        
         total = tk.Label(self.root, text=total_text, fg="white", bg="#3f2622", font=self.font_big_bold, height=2, width=20)
         total.place(relx=total_x, rely=total_y, anchor="se")
         label = tk.Label(self.root, text=label_text, fg="#3f2622", bg="white", font=self.font_large_bold, pady=5, padx=5)
