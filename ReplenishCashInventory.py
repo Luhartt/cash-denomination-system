@@ -101,10 +101,3 @@ class ReplenishCashInventory(Utils):
             if self.window_before:
                 self.window_before.deiconify() 
                 
-def main():
-    root = tk.Tk()
-    app = ReplenishCashInventory(root)
-    root.mainloop()
-
-if __name__ == "__main__":
-    main()

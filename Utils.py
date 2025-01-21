@@ -12,7 +12,16 @@ class Utils:
             root.tk.call("tk", "scaling", 1.0)
         elif platform.system() == "Darwin":
                  root.tk.call("tk", "scaling", 1.2)
-        self.root.geometry("950x600")
+
+
+        # center window
+        width = 950
+        height = 600
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        center_x = int((screen_width/2) - (width/2))
+        center_y = int((screen_height/2) - (height/2))
+        self.root.geometry(f'{width}x{height}+{center_x}+{center_y}')
         self.root.resizable(False, False)
 
      def setup_background(self):

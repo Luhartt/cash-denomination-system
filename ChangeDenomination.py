@@ -28,6 +28,7 @@ class ChangeDenomination(Utils):
         self.setup_process_payment_label()
         self.add_transaction(self.total_bill)
     def finished_clicked(self):
+        
         self.root.destroy()
         if self.main_window:
                 self.main_window.deiconify() 

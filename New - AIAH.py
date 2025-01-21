@@ -79,10 +79,7 @@ class CashierProgram:
             (1000, "10"), (500, "5"), (100, "1"),
             (25, "0.25"), (10, "0.10"), (5, "0.05")  
         ]
-        change_denomination = {
-            
-        }
-
+        
         print("\nGiving change:")
         insufficient_change = False
 
@@ -99,8 +96,7 @@ class CashierProgram:
                     self.bills_and_coins[denomination] -= quantity_to_give
                     change_in_cents -= quantity_to_give * value_in_cents
                     print(f"{denomination} peso(s): {quantity_to_give}")
-                    change_denomination[denomination] = quantity_to_give
-# 
+
         if change_in_cents > 0:
             shortfall = change_in_cents / 100
             print(f"Warning: Unable to provide full change. Shortfall: {shortfall:.2f} pesos.")

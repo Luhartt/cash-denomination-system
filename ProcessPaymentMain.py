@@ -5,6 +5,7 @@ from Utils import Utils
 from Utils import SquareFrame
 from ChangeDenomination import ChangeDenomination
 from session import Session
+from ErrorWindow import ErrorWindow
 class ProcessPaymentMain(Utils):
         def __init__(self, root, values, main_window):
                 super().__init__(root, "Process Payment") 
@@ -24,11 +25,18 @@ class ProcessPaymentMain(Utils):
                 self.setup_instructions()
                 self.total_bill = 0
                 self.total_payment = 0
+                self.shortfall = 0
+                self.change_in_cents = 0
                 self.payment_denomination = {}
                 self.setup_process_payment_label()
                 self.main_window = main_window
         
         def proceed_clicked(self):
+                self.total_bill = 0
+                self.total_payment = 0
+                self.change_in_cents = 0
+                self.payment_denomination = {}
+                
                 self.total_bill = float(self.get_bill_total())
                 self.total_payment = float(self.get_payment_total())
                 change = self.total_payment-self.total_bill 
@@ -46,10 +54,21 @@ class ProcessPaymentMain(Utils):
                                            self.main_window)
                         change_denomination_window.protocol("WM_DELETE_WINDOW",  lambda: self.on_close_window(change_denomination_window))  
 
+                # else error
+                else:
+                        self.root.withdraw()
+                        error_window = tk.Toplevel(self.root)
+                        ErrorWindow(error_window, shortfall=self.shortfall, window_before=self.root, home=self.main_window)
+                        error_window.protocol("WM_DELETE_WINDOW",  lambda: self.on_close_window(error_window))  
+                        self.change_in_cents = 0
+                
+
+
+
         def give_change(self, change):
                 self.session = Session()
                 self.bills_and_coins = self.session.get_coins_and_bills()
-                change_in_cents = int(change * 100)
+                self.change_in_cents = int(change * 100)
                 denominations = [
                 (100000, "1000"), (50000, "500"), (20000, "200"),
                 (10000, "100"), (5000, "50"), (2000, "20"),
@@ -59,28 +78,27 @@ class ProcessPaymentMain(Utils):
                 self.change_denomination = {denomination: 0 for type, denomination in denominations}
                 
                 print("\nGiving change:")
-                insufficient_change = False
-
                 for value_in_cents, denomination in denominations:
-                        if change_in_cents <= 0:
+                        if self.change_in_cents <= 0:
                                 break
 
-                        quantity_needed = change_in_cents // value_in_cents
+                        quantity_needed = self.change_in_cents // value_in_cents
                         available_quantity = self.bills_and_coins[denomination]
 
                         if quantity_needed > 0:
                                 quantity_to_give = min(quantity_needed, available_quantity)
                                 if quantity_to_give > 0:
-                                        self.bills_and_coins[denomination] -= quantity_to_give
-                                        change_in_cents -= quantity_to_give * value_in_cents
-                                        print(f"{denomination} peso(s): {quantity_to_give}")
+                                        # self.bills_and_coins[denomination] -= quantity_to_give
+                                        self.change_in_cents -= quantity_to_give * value_in_cents
                                         self.change_denomination[denomination] = quantity_to_give
-                if change_in_cents > 0:
-                        shortfall = change_in_cents / 100
-                        print(f"Warning: Unable to provide full change. Shortfall: {shortfall:.2f} pesos.")
+                if self.change_in_cents > 0:
+                        self.shortfall = self.change_in_cents / 100
                         return False
 
-                print("Change given successfully.")
+                for denomination in self.bills_and_coins:
+                        subtract_quantity = self.change_denomination[denomination]
+                        self.bills_and_coins[denomination] -= subtract_quantity
+                        
                 return denomination
 
                 
@@ -179,7 +197,6 @@ class ProcessPaymentMain(Utils):
                 "4", "5", "6",
                 "7", "8", "9",
                 "0", ".", "Clear",
-                "PAY"
                 ]
 
                 for index, var in enumerate(button):
@@ -220,13 +237,13 @@ class ProcessPaymentMain(Utils):
                                                justify='left'
                                                 )
                 instructions_label2 = tk.Label(instructions_frame, 
-                                               text = "PAY.", 
+                                               text = "PROCEED.", 
                                                font=self.font_medium_big_bold,    
                                                bg="white",
                                                fg="#3f2622", 
                                                 )
                 instructions_label1.place(x=0, y=0)
-                instructions_label2.place(x=140, y=48, anchor="center")
+                instructions_label2.place(x=160, y=48, anchor="center")
                 instructions_frame.place(rely = 0.8, relx=0.1, anchor="nw")
                 
         def get_bill_total(self):
@@ -235,6 +252,7 @@ class ProcessPaymentMain(Utils):
                 return SquareFrame.get_cash_total(self.square_frame_process_payment)
         def get_payment_denomination(self):
                 return SquareFrame.get_cash_denomination(self.square_frame_process_payment)
+
 
 
 

@@ -26,7 +26,7 @@ class Session:
                 }
     def get_transactions(self):
         return self.transactions
-
+            
     def add_transaction(self, time, amount):
         """
         Add a new transaction to the transactions set.
