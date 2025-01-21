@@ -33,10 +33,10 @@ class CashInventory(Utils):
         #check inventory label
         check_inventory_image = Image.open("pictures/CheckInventory.png")
         check_inventory_image = check_inventory_image.resize((20, 20), Image.Resampling.LANCZOS)
-        self.check_intentory_image = ImageTk.PhotoImage(check_inventory_image)
-        self.check_inventory_label = tk.Label(self.root, 
+        self.check_intenvory_image = ImageTk.PhotoImage(check_inventory_image)
+        self.check_invenvory_label = tk.Label(self.root, 
                                         text="       Check Inventory",
-                                        image=self.check_intentory_image, 
+                                        image=self.check_invenvory_image, 
                                         font=self.font_small_bold, 
                                         bg="white",
                                         compound="left",

@@ -3,21 +3,19 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from Utils import Utils
 from Utils import SquareFrame
-from Session import Session
+from ChangeDenomination import ChangeDenomination
 class ProcessPaymentMain(Utils):
-        def __init__(self, root, values):
+        def __init__(self, root, values, main_window):
                 super().__init__(root, "Process Payment") 
                 super().setup_background()
                 super().setup_fonts()
-                self.session = Session()
-    
                 self.square_frame_process_payment = SquareFrame(self.root, 
                                                                 heading="PAYMENT", 
                                                                 x=0.45, y=0.15,
                                                                )
                 
                 self.square_frame_process_payment.set_values_editable(values)
-                self.square_frame_process_payment.create_cash_components(callback=self.proceed_clicked)
+                self.square_frame_process_payment.create_cash_components(callback=self.proceed_clicked, button="PROCEED")
                 
                 self.setup_payment_container()
                 self.setup_calculator_contents()
@@ -26,21 +24,98 @@ class ProcessPaymentMain(Utils):
                 self.total_bill = 0
                 self.total_payment = 0
                 self.payment_denomination = {}
+                self.setup_process_payment_label()
+                self.main_window = main_window
         
         def proceed_clicked(self):
                 self.total_bill = float(self.get_bill_total())
                 self.total_payment = float(self.get_payment_total())
                 change = self.total_payment-self.total_bill 
                 self.payment_denomination = self.get_payment_denomination()
+                      
+                # next window if conditions are met
                 
-                # passes to session
-                self.session.set_total_bill(self.total_bill)
-                self.session.set_total_payment(self.total_payment)
-                self.session.set_payment_denomination(self.payment_denomination)
-                self.session.set_total_change(change)
+                if (self.give_change(change) and change > 0):
+                        self.root.withdraw()
+                        change_denomination_window = tk.Toplevel(self.root)
+                        ChangeDenomination(change_denomination_window, 
+                                           self.change_denomination, 
+                                           self.total_bill, 
+                                           self.total_payment, 
+                                           self.main_window)
+                        change_denomination_window.protocol("WM_DELETE_WINDOW",  lambda: self.on_close_window(change_denomination_window))  
+
+        def give_change(self, change):
+                self.bills_and_coins = {
+                "1000": 10,
+                "500": 10,
+                "200": 10,
+                "100": 10,
+                "50": 10,
+                "20": 10,
+                "10": 10,
+                "5": 10,
+                "1": 10,
+                "0.25": 10, 
+                "0.10": 10, 
+                "0.05": 10, 
+                }
+                change_in_cents = int(change * 100)
+                denominations = [
+                (100000, "1000"), (50000, "500"), (20000, "200"),
+                (10000, "100"), (5000, "50"), (2000, "20"),
+                (1000, "10"), (500, "5"), (100, "1"),
+                (25, "0.25"), (10, "0.10"), (5, "0.05")  
+                ]
+                self.change_denomination = {denomination: 0 for type, denomination in denominations}
                 
-                print("Proceed Clicked")
-    
+                print("\nGiving change:")
+                insufficient_change = False
+
+                for value_in_cents, denomination in denominations:
+                        if change_in_cents <= 0:
+                                break
+
+                        quantity_needed = change_in_cents // value_in_cents
+                        available_quantity = self.bills_and_coins[denomination]
+
+                        if quantity_needed > 0:
+                                quantity_to_give = min(quantity_needed, available_quantity)
+                                if quantity_to_give > 0:
+                                        self.bills_and_coins[denomination] -= quantity_to_give
+                                        change_in_cents -= quantity_to_give * value_in_cents
+                                        print(f"{denomination} peso(s): {quantity_to_give}")
+                                        self.change_denomination[denomination] = quantity_to_give
+                if change_in_cents > 0:
+                        shortfall = change_in_cents / 100
+                        print(f"Warning: Unable to provide full change. Shortfall: {shortfall:.2f} pesos.")
+                        return False
+
+                print("Change given successfully.")
+                return denomination
+
+                
+        def on_close_window(self, child_window):
+                child_window.destroy()
+                self.root.deiconify() 
+                
+        def setup_process_payment_label(self):
+                #check inventory label
+                process_payment_image = Image.open("pictures/ProcessPayment.png")
+                process_payment_image = process_payment_image.resize((20, 20), Image.Resampling.LANCZOS)
+                self.process_payment_image = ImageTk.PhotoImage(process_payment_image)
+                self.process_payment_label = tk.Label(self.root, 
+                                                text="       Process Payment",
+                                                image=self.process_payment_image, 
+                                                font=self.font_small_bold, 
+                                                bg="white",
+                                                compound="left",
+                                                fg="#3f2622",
+                                                padx=5,
+                                                pady=5
+                                                )
+                self.process_payment_label.place(rely=0, relx=0.80)
+        
         
         def setup_payment_container(self):
                 self.calculator_frame = tk.Frame(self.root,                                        

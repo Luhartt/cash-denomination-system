@@ -114,7 +114,7 @@ class MainMenuApp(Utils):
             10, 5, 1, 0.25, 0.10, 0.5,
         ]
         process_payment_window = tk.Toplevel(self.root)
-        ProcessPaymentMain(process_payment_window, values)
+        ProcessPaymentMain(process_payment_window, values, self.root)
         process_payment_window.protocol("WM_DELETE_WINDOW",  lambda: self.on_close_window(process_payment_window))
         
     def on_check_inventory(self):

@@ -3,37 +3,57 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from Utils import Utils
 from Utils import SquareFrame
-from Session import Session
 
 class ChangeDenomination(Utils):
            
-    def __init__(self, root, denomination):
+    def __init__(self, root, denomination, total_bill, total_payment, main_window):
         self.root = root
         super().__init__(root, "Process Payment") 
         super().setup_background()
         super().setup_fonts()
-        self.session = Session()
+        self.total_bill = total_bill
+        self.total_payment = total_payment
+        self.main_window = main_window
     
         self.square_frame_change_denomination = SquareFrame(self.root, 
-                                                       heading="DENOMINATION BREAKDOWN", 
-                                                       x=0.45, y=0.15,
+                                                       heading="CHANGE DENOMINATION", 
+                                                       x=0.41, y=0.15
                                                        )
         self.square_frame_change_denomination.set_change_denomination(denomination)
-        self.square_frame_change_denomination.create_change_components(callback=self.proceed_clicked)
-        self.setup_totals(label_text="TOTAL BILL", label_y=0.5, label_x=0.5, total_y=0.1, total_x=0.1, total_text="₱5.00")
-        self.setup_totals(label_text="TOTAL PAYMENT", label_y=0.7, label_x=0.7, total_y=0.2, total_x=0.2, total_text="₱10.00")
-
+        self.square_frame_change_denomination.create_change_components(callback=self.finished_clicked, button = "FINISHED")
+        self.setup_totals(label_text="TOTAL BILL", label_y=0.51, label_x=0.24, total_y=0.65, total_x=0.37, total_text=f"₱  {self.total_bill}")
+        self.setup_totals(label_text="TOTAL PAYMENT", label_y=0.76, label_x=0.24, total_y=0.90, total_x=0.37, total_text=f"₱  {self.total_payment}")
+        self.setup_process_payment_label()
         
-    def proceed_clicked(self):
-        pass
+    def finished_clicked(self):
+        self.root.destroy()
+        if self.main_window:
+                self.main_window.deiconify() 
         
     def setup_totals(self, label_x, label_y, total_x, total_y, label_text, total_text):
-        label = tk.Label(self.root, text=label_text, fg="white")
+        
+        
+        total = tk.Label(self.root, text=total_text, fg="white", bg="#3f2622", font=self.font_big_bold, height=2, width=20)
+        total.place(relx=total_x, rely=total_y, anchor="se")
+        label = tk.Label(self.root, text=label_text, fg="#3f2622", bg="white", font=self.font_large_bold, pady=5, padx=5)
         label.place(relx=label_x, rely= label_y, anchor="center")
-        total = tk.Label(self.root, text=total_text, fg="#4d342f", bg="white")
-        total.place(relx=total_x, rely=total_y, anchor="cent")
         
-        
+    def setup_process_payment_label(self):
+        #check inventory label
+        process_payment_image = Image.open("pictures/ProcessPayment.png")
+        process_payment_image = process_payment_image.resize((20, 20), Image.Resampling.LANCZOS)
+        self.process_payment_image = ImageTk.PhotoImage(process_payment_image)
+        self.process_payment_label = tk.Label(self.root, 
+                                        text="       Process Payment",
+                                        image=self.process_payment_image, 
+                                        font=self.font_small_bold, 
+                                        bg="white",
+                                        compound="left",
+                                        fg="#3f2622",
+                                        padx=5,
+                                        pady=5
+                                        )
+        self.process_payment_label.place(rely=0, relx=0.80)
         
 def main():
     denomination = {

@@ -62,19 +62,19 @@ class SquareFrame:
             self.cash_total_var = tk.StringVar()
             self.cash_total_var.set("P 0.00")
     
-        def create_cash_components(self, callback):
+        def create_cash_components(self, callback, button):
             self.setup_editable_items()
             self.setup_dynamic_total_cash()
-            self.setup_proceed_button(callback)
+            self.setup_button(callback, button)
 
 
             
         def set_change_denomination(self, values):
             self.change_denomination = values
-        def create_change_components(self, callback):
+        def create_change_components(self, callback, button):
             self.setup_label_items()
             self.setup_total_change()
-            self.setup_proceed_button(callback)
+            self.setup_button(callback, button)
 
 
             
@@ -168,7 +168,7 @@ class SquareFrame:
                 self.create_editable_item(row, column, x)
                 row += 1
                 
-        # function used in calculating total
+        # function used in calculating total cash
         def calculate_total(self, *args):
             total = 0
             for type, var in self.amount_vars.items():
@@ -227,7 +227,7 @@ class SquareFrame:
         def setup_total_change(self):
             total = 0;
             for x in self.change_denomination:
-                total+= x * self.change_denomination[x];
+                total+= float(x) * float(self.change_denomination[x]);
             total_cash = tk.Label(self.square_frame, 
                                         bg="white",
                                         fg="#3f2622", 
@@ -237,9 +237,9 @@ class SquareFrame:
             total_cash.place(relx=0.3, rely=0.87, anchor="n")
         
             # Proceed Button
-        def setup_proceed_button(self, callback):
+        def setup_button(self, callback, content):
             proceed_button = tk.Button(self.square_frame, 
-                                       text="PROCEED", 
+                                       text=content, 
                                        bg="#3f2622",
                                        fg="white",
                                        borderwidth=0,
