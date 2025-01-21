@@ -3,7 +3,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from Utils import Utils
 from Utils import SquareFrame
-from transactions import Transactions
+from session import Session
 from datetime import datetime
 
 class ChangeDenomination(Utils):
@@ -16,7 +16,7 @@ class ChangeDenomination(Utils):
         self.total_bill = total_bill
         self.total_payment = total_payment
         self.main_window = main_window
-    
+        self.Session = Session()
         self.square_frame_change_denomination = SquareFrame(self.root, 
                                                        heading="CHANGE DENOMINATION", 
                                                        x=0.41, y=0.15
@@ -32,10 +32,10 @@ class ChangeDenomination(Utils):
         if self.main_window:
                 self.main_window.deiconify() 
     def add_transaction(self, total_bill):
-        transaction = Transactions()
+        
         current_time = datetime.now()
         formatted_time = current_time.strftime("%H:%M")
-        transaction.add_transaction(formatted_time, f"+{total_bill}")
+        self.Session.add_transaction(formatted_time, f"+{total_bill}")
         
     def setup_totals(self, label_x, label_y, total_x, total_y, label_text, total_text):
         total = tk.Label(self.root, text=total_text, fg="white", bg="#3f2622", font=self.font_big_bold, height=2, width=20)

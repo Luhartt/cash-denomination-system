@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 from Utils import Utils
 from Utils import SquareFrame
 from ChangeDenomination import ChangeDenomination
+from session import Session
 class ProcessPaymentMain(Utils):
         def __init__(self, root, values, main_window):
                 super().__init__(root, "Process Payment") 
@@ -46,20 +47,8 @@ class ProcessPaymentMain(Utils):
                         change_denomination_window.protocol("WM_DELETE_WINDOW",  lambda: self.on_close_window(change_denomination_window))  
 
         def give_change(self, change):
-                self.bills_and_coins = {
-                "1000": 10,
-                "500": 10,
-                "200": 10,
-                "100": 10,
-                "50": 10,
-                "20": 10,
-                "10": 10,
-                "5": 10,
-                "1": 10,
-                "0.25": 10, 
-                "0.10": 10, 
-                "0.05": 10, 
-                }
+                self.session = Session()
+                self.bills_and_coins = self.session.get_coins_and_bills()
                 change_in_cents = int(change * 100)
                 denominations = [
                 (100000, "1000"), (50000, "500"), (20000, "200"),

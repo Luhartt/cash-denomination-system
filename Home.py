@@ -4,14 +4,13 @@ from PIL import Image, ImageTk
 from Utils import Utils
 from ProcessPaymentMain import ProcessPaymentMain
 from CheckInventory import CashInventory
+from ReplenishCashInventory import ReplenishCashInventory
 
 class MainMenuApp(Utils):
     def __init__(self, root):
         self.root = root
         super().__init__(root, "Main Menu") 
         super().setup_background()
-
-        
         # Initialize font
         self.font = ("Poppins", 17, "bold")
         
@@ -35,7 +34,8 @@ class MainMenuApp(Utils):
         image_paths = [
             "pictures/CheckInventory.png",
             "pictures/ProcessPayment.png",
-            "pictures/Exit.png"
+            "pictures/Exit.png",
+            "pictures/ReplenishInventory.png"
         ]
         
         for path in image_paths:
@@ -86,7 +86,7 @@ class MainMenuApp(Utils):
             self.process_payment = self.create_button(
                 "Process\nPayment",
                 self.photos[1],
-                0.3,
+                0.2,
                 self.on_process_payment
             )
             
@@ -94,15 +94,23 @@ class MainMenuApp(Utils):
             self.check_inventory = self.create_button(
                 "Check\nInventory",
                 self.photos[0],
-                0.5,
+                0.4,
                 self.on_check_inventory
             )
             
             # Exit Button
+            
+            self.replenish_inventory_button = self.create_button(
+                "Replenish\nInventory",
+                self.photos[3],
+                0.6,
+                self.on_replenish_inventory
+            )
+            
             self.exit_button = self.create_button(
                 "Exit\n",
                 self.photos[2],
-                0.7,
+                0.8,
                 self.root.quit
             )
             
@@ -120,15 +128,17 @@ class MainMenuApp(Utils):
     def on_check_inventory(self):
         """Handle check inventory button click"""
         self.root.withdraw()  # Hide the main menu window
-        remaining = {
-            1000: 10, 500: 15, 200: 23, 100: 30, 50: 52,
-            20: 56, 10: 100, 5: 140, 1: 200, 0.25: 5,
-            0.10: 3, 0.5: 1
-        }
         check_inventory_window = tk.Toplevel(self.root)
-        CashInventory(check_inventory_window, remaining, self.root)
-        check_inventory_window.protocol("WM_DELETE_WINDOW",  lambda: self.on_close_window(check_inventory_window))    
-    
+        CashInventory(check_inventory_window, self.root)
+        check_inventory_window.protocol("WM_DELETE_WINDOW",  lambda: self.on_close_window(check_inventory_window)) 
+           
+    def on_replenish_inventory(self):
+        """Handle check inventory button click"""
+        self.root.withdraw()  # Hide the main menu window
+        replenish_inventory_window = tk.Toplevel(self.root)
+        ReplenishCashInventory(replenish_inventory_window, self.root)
+        replenish_inventory_window.protocol("WM_DELETE_WINDOW",  lambda: self.on_close_window(replenish_inventory_window))    
+
 
     def on_close_window(self, child_window):
         """Handle closing a child window."""

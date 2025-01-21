@@ -2,9 +2,9 @@ from tkinter import *
 import tkinter as tk
 from PIL import Image, ImageTk
 from Utils import Utils
-from transactions import Transactions
+from session import Session
 class CashInventory(Utils):
-    def __init__(self, root, remaining, main_window=None):
+    def __init__(self, root,  main_window=None):
         self.root = root
         super().__init__(root, "Check Inventory") 
         super().setup_background()
@@ -12,11 +12,16 @@ class CashInventory(Utils):
 
         self.main_window = main_window 
         
-        # setup current values
-        self.remaining = remaining
+        self.Session = Session()
 
+        
+        # setup current values
+        self.remaining = self.Session.get_coins_and_bills()
+        
         # Initialize fonts
         self.setup_fonts()
+        
+        # initialize session
         
         # Setup main components
         self.setup_check_inventory_label()
@@ -29,7 +34,10 @@ class CashInventory(Utils):
         
         # Populate initial data
         self.populate_history()
-    
+
+        
+
+
     def setup_check_inventory_label(self):
         #check inventory label
         check_inventory_image = Image.open("pictures/CheckInventory.png")
@@ -98,7 +106,7 @@ class CashInventory(Utils):
     def setup_total_cash(self):
         total = 0;
         for x in self.remaining:
-            total+= x * self.remaining[x];
+            total+= float(x) * float(self.remaining[x]);
         total_cash = tk.Label(self.cash_inventory_frame, 
                                        bg="white",
                                        fg="#3f2622", 
@@ -169,8 +177,7 @@ class CashInventory(Utils):
     
     def populate_history(self):
         # Add sample history entries
-        self.transaction = Transactions()
-        for i, (time, amount) in enumerate(self.transaction.get_transactions()):  
+        for i, (time, amount) in enumerate(self.Session.get_transactions()):  
             self.create_history_label(time, amount)
 
         # end for
