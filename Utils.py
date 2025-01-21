@@ -132,11 +132,11 @@ class SquareFrame:
 
         def calculate_total(self, *args):
             total = 0
-            for value, var in self.amount_vars.items():
+            for type, var in self.amount_vars.items():
                 try:
                     amount = var.get()
                     if amount:  
-                        total += float(value) * float(amount)
+                        total += float(type) * float(amount)
                 except ValueError:
                     pass  
             
@@ -172,4 +172,16 @@ class SquareFrame:
             
         def getTotal(self):
             return self.total
-
+        def getPaymentDenomination(self):
+            denomination_amounts = {}
+            for type, var in self.amount_vars.items():
+                # var is the StringVars (what is returned in Entries)
+                try:
+                    amount = var.get()
+                    if amount:  
+                        denomination_amounts[float(type)] = amount
+                    else:  
+                        denomination_amounts[float(type)] = 0
+                except ValueError:
+                    denomination_amounts[float(type)] = 0
+            return denomination_amounts

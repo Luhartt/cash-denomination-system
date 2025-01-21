@@ -3,12 +3,13 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from Utils import Utils
 from Utils import SquareFrame
-
+import Session
 class ProcessPaymentMain(Utils):
         def __init__(self, root, values):
                 super().__init__(root, "Process Payment") 
                 super().setup_background()
                 super().setup_fonts()
+                self.session = Session()
     
                 self.square_frame_process_payment = SquareFrame(self.root, 
                                                                 values, heading="PAYMENT", 
@@ -22,12 +23,19 @@ class ProcessPaymentMain(Utils):
                 self.setup_instructions()
                 self.total_bill = 0
                 self.total_payment = 0
+                self.payment_denomination = {}
         
         def proceed_clicked(self):
                 self.total_bill = float(self.getBillTotal())
                 self.total_payment = float(self.getPaymentTotal())
                 change = self.total_payment-self.total_bill 
-                print(change)
+                self.payment_denomination = self.getPaymentDenomination()
+                
+                # passes to session
+                self.session.set_total_bill(self.total_bill)
+                self.session.set_total_payment(self.total_payment)
+                self.session.set_payment_denomination(self.payment_denomination)
+                self.session.set_total_change(change)
     
         
         def setup_payment_container(self):
@@ -157,6 +165,8 @@ class ProcessPaymentMain(Utils):
                 return self.input_frame_entry.get()  
         def getPaymentTotal(self):
                 return SquareFrame.getTotal(self.square_frame_process_payment)
+        def getPaymentDenomination(self):
+                return SquareFrame.getPaymentDenomination(self.square_frame_process_payment)
 
 
 
