@@ -3,7 +3,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from Utils import Utils
 from Utils import SquareFrame
-import Session
+from Session import Session
 class ProcessPaymentMain(Utils):
         def __init__(self, root, values):
                 super().__init__(root, "Process Payment") 
@@ -12,10 +12,12 @@ class ProcessPaymentMain(Utils):
                 self.session = Session()
     
                 self.square_frame_process_payment = SquareFrame(self.root, 
-                                                                values, heading="PAYMENT", 
-                                                                callback=self.proceed_clicked, 
+                                                                heading="PAYMENT", 
                                                                 x=0.45, y=0.15,
-                                                                editable = True)
+                                                               )
+                
+                self.square_frame_process_payment.set_values_editable(values)
+                self.square_frame_process_payment.create_cash_components(callback=self.proceed_clicked)
                 
                 self.setup_payment_container()
                 self.setup_calculator_contents()
@@ -26,16 +28,18 @@ class ProcessPaymentMain(Utils):
                 self.payment_denomination = {}
         
         def proceed_clicked(self):
-                self.total_bill = float(self.getBillTotal())
-                self.total_payment = float(self.getPaymentTotal())
+                self.total_bill = float(self.get_bill_total())
+                self.total_payment = float(self.get_payment_total())
                 change = self.total_payment-self.total_bill 
-                self.payment_denomination = self.getPaymentDenomination()
+                self.payment_denomination = self.get_payment_denomination()
                 
                 # passes to session
                 self.session.set_total_bill(self.total_bill)
                 self.session.set_total_payment(self.total_payment)
                 self.session.set_payment_denomination(self.payment_denomination)
                 self.session.set_total_change(change)
+                
+                print("Proceed Clicked")
     
         
         def setup_payment_container(self):
@@ -161,12 +165,12 @@ class ProcessPaymentMain(Utils):
                 instructions_label2.place(x=140, y=48, anchor="center")
                 instructions_frame.place(rely = 0.8, relx=0.1, anchor="nw")
                 
-        def getBillTotal(self):
+        def get_bill_total(self):
                 return self.input_frame_entry.get()  
-        def getPaymentTotal(self):
-                return SquareFrame.getTotal(self.square_frame_process_payment)
-        def getPaymentDenomination(self):
-                return SquareFrame.getPaymentDenomination(self.square_frame_process_payment)
+        def get_payment_total(self):
+                return SquareFrame.get_cash_total(self.square_frame_process_payment)
+        def get_payment_denomination(self):
+                return SquareFrame.get_cash_denomination(self.square_frame_process_payment)
 
 
 

@@ -40,31 +40,44 @@ class Utils:
             self.font_small_italic = ("Asap Condensed", 10, "italic")
             
 class SquareFrame:
-        def __init__(self, root, values, heading, callback, x, y, editable):
-             self.values = values
-             self.root = root
-             self.frameX = x
-             self.frameY = y
-             self.editable = editable
-             self.font_big_bold = ("Asap Condensed", 25, "bold")
-             self.font_large_bold = ("Asap Condensed", 35, "bold")
-             self.font_medium_bold = ("Asap Condensed", 15, "bold")
-             self.heading = heading
-             self.amount_vars = {}
-             self.total = 0
-             self.total_var = tk.StringVar()
-             self.total_var.set("P 0.00")
-             self.callback=callback
-             self.setup_square_frame()
-             self.setup_heading()
+        def __init__(self, root, heading, x, y):
+            self.root = root
+            self.frameX = x
+            self.frameY = y
+            self.font_big_bold = ("Asap Condensed", 25, "bold")
+            self.font_large_bold = ("Asap Condensed", 35, "bold")
+            self.font_medium_bold = ("Asap Condensed", 15, "bold")
+            self.heading = heading
+
+            self.setup_square_frame()
+            self.setup_heading()
+
 
              
-             if(editable):
-              self.setup_editable_items()
-              self.setup_editable_total()
-              self.setup_proceed_button_editable()
+    
+        def set_values_editable(self, values):
+            self.values = values
+            self.amount_vars = {}
+            self.cash_total = 0
+            self.cash_total_var = tk.StringVar()
+            self.cash_total_var.set("P 0.00")
+    
+        def create_cash_components(self, callback):
+            self.setup_editable_items()
+            self.setup_dynamic_total_cash()
+            self.setup_proceed_button(callback)
 
-             
+
+            
+        def set_change_denomination(self, values):
+            self.change_denomination = values
+        def create_change_components(self, callback):
+            self.setup_label_items()
+            self.setup_total_change()
+            self.setup_proceed_button(callback)
+
+
+            
         def setup_square_frame(self):
             self.square_frame = tk.Frame(self.root, bg="white", 
                                             height=450, width=450)
@@ -82,6 +95,10 @@ class SquareFrame:
                                         )    
             heading.place(relx=0.5, y = 15, anchor="n")            
         
+            """This part up to calculate_total is used for the Process Payment Main / Replenish Cash Drawer part
+            """
+            
+            # Used to create Label and Entries for payment input 
         def create_editable_item(self, row, column, item_type):
             if not hasattr(self, 'validation_command'):
                 self.validation_command = (self.root.register(self.validate_numeric), '%P')
@@ -114,39 +131,30 @@ class SquareFrame:
             type_label.grid(column=0, row=0)
             amount_entry.grid(column=1, row=0)
             
-            return type_label, amount_entry
+            return type_label, amount_entry            
 
-        def setup_editable_total(self):
+         # Used to create dynamic for total change
+        def setup_dynamic_total_cash(self):
             # Create StringVar for total
-            self.total_var = tk.StringVar()
-            self.total_var.set("₱ 0.00")  # Set default value
+            self.cash_total_var = tk.StringVar()
+            self.cash_total_var.set("₱ 0.00")  # Set default value
             
-            self.total_cash = tk.Label(self.square_frame,
+            self.total_cash_label = tk.Label(self.square_frame,
                                     bg="white",
                                     fg="#3f2622",
                                     pady=0,
                                     height=1,
-                                    textvariable=self.total_var,  
+                                    textvariable=self.cash_total_var,  
                                     font=self.font_large_bold)    
-            self.total_cash.place(relx=0.3, rely=0.87, anchor="n")
+            self.total_cash_label.place(relx=0.3, rely=0.87, anchor="n")
 
-        def calculate_total(self, *args):
-            total = 0
-            for type, var in self.amount_vars.items():
-                try:
-                    amount = var.get()
-                    if amount:  
-                        total += float(type) * float(amount)
-                except ValueError:
-                    pass  
-            
-            self.total = total
-            self.total_var.set(f"₱ {total:.2f}")
-
+        
+        # Validating input in entry
         def validate_numeric(self, value):
             """Validate that input is numeric or empty"""
             return value.isdigit() or value == ""
         
+        # Setting up the label and the entries
         def setup_editable_items(self):
             column = 0
             row = 0
@@ -159,7 +167,77 @@ class SquareFrame:
                     counter = 0
                 self.create_editable_item(row, column, x)
                 row += 1
-        def setup_proceed_button_editable(self):
+                
+        # function used in calculating total
+        def calculate_total(self, *args):
+            total = 0
+            for type, var in self.amount_vars.items():
+                try:
+                    amount = var.get()
+                    if amount:  
+                        total += float(type) * float(amount)
+                except ValueError:
+                    pass  
+            
+            self.cash_total = total
+            self.cash_total_var.set(f"₱ {total:.2f}")
+        
+        
+            """This part until create setup_total_change is used for Change Denomination
+            """
+            # Used in creating labels (1000 x 5)
+        def create_label_item(self, rw, col, type, amount):
+            item_frame = tk.Frame(self.square_contents, bg="white")
+            item_frame.grid(row = rw, column=col, padx=25, pady=5)
+            item_type = tk.Label(item_frame, 
+                                        text=f"{type}  X  ", 
+                                        fg="#3f2622",
+                                        bg="white",
+                                        width=8,
+                                        anchor="w", 
+                                        font=self.font_big_bold
+                                        )
+            item_amount = tk.Label(item_frame, 
+                                        text=f"{amount}", 
+                                        fg="#3f2622",
+                                        bg="#f6f1ee",
+                                        width=5,
+                                        anchor="w", 
+                                        font=self.font_big_bold
+                                        )
+
+            item_type.grid(column=0, row=0)
+            item_amount.grid(column=1, row=0)
+            
+            # Setting up items
+        def setup_label_items(self):
+            column = 0
+            row = 0
+            counter = 0;
+            for x in self.change_denomination:
+                counter+=1
+                if(counter == 7):
+                    column += 1
+                    row = 0
+                    counter = 0
+                self.create_label_item(row, column, x, self.change_denomination[x])
+                row += 1
+                
+            # calculating and setting up total change
+        def setup_total_change(self):
+            total = 0;
+            for x in self.change_denomination:
+                total+= x * self.change_denomination[x];
+            total_cash = tk.Label(self.square_frame, 
+                                        bg="white",
+                                        fg="#3f2622", 
+                                        text=f"P {total}",
+                                        font=self.font_large_bold
+                                        )    
+            total_cash.place(relx=0.3, rely=0.87, anchor="n")
+        
+            # Proceed Button
+        def setup_proceed_button(self, callback):
             proceed_button = tk.Button(self.square_frame, 
                                        text="PROCEED", 
                                        bg="#3f2622",
@@ -167,12 +245,13 @@ class SquareFrame:
                                        borderwidth=0,
                                        font=self.font_big_bold,
                                        relief="flat",
-                                       command=self.callback)
+                                       command=callback)
             proceed_button.place(relx=0.7, rely=0.87, anchor="n")
             
-        def getTotal(self):
-            return self.total
-        def getPaymentDenomination(self):
+            # returns total calculate change
+        def get_cash_total(self):
+            return self.cash_total
+        def get_cash_denomination(self):
             denomination_amounts = {}
             for type, var in self.amount_vars.items():
                 # var is the StringVars (what is returned in Entries)
