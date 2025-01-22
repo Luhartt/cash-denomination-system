@@ -101,9 +101,12 @@ class ProcessPaymentMain(Utils):
                 for denomination in self.bills_and_coins:
                         subtract_quantity = self.change_denomination[denomination]
                         self.bills_and_coins[denomination] -= subtract_quantity
-                for denomination in self.bills_and_coins:
+                for denomination in self.payment_denomination:
                         add_quantity = self.payment_denomination[denomination]
-                        self.bills_and_coins += add_quantity
+                        key = str(int(denomination)) if denomination >= 1 else str(denomination)
+                        key += "0" if key == "0.1" else ""
+                        self.bills_and_coins[key] += int(add_quantity)
+
                 return denomination
 
                 

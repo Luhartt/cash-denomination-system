@@ -119,7 +119,7 @@ class MainMenuApp(Utils):
         self.root.withdraw()  # Hide the main menu window
         values = [
             1000, 500, 200, 100, 50, 20,
-            10, 5, 1, 0.25, 0.10, 0.5,
+            10, 5, 1, 0.25, 0.10, 0.05,
         ]
         process_payment_window = tk.Toplevel(self.root)
         ProcessPaymentMain(process_payment_window, values, self.root)
