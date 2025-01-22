@@ -173,8 +173,8 @@ class CashInventory(Utils):
             font=self.font_small_bold,
             bg="white"
         )
-        label.pack(pady=10)
-    
+        label.pack(pady=10) 
+        
     def populate_history(self):
         # Add sample history entries
         for i, (time, amount) in enumerate(self.Session.get_transactions()):  

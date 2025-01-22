@@ -43,7 +43,10 @@ class ProcessPaymentMain(Utils):
                 self.payment_denomination = self.get_payment_denomination()
                       
                 # next window if conditions are met
-                
+                                
+                if(self.total_bill > self.total_payment):
+                        return
+                 
                 if (self.give_change(change) and change > 0):
                         self.root.withdraw()
                         change_denomination_window = tk.Toplevel(self.root)
@@ -98,15 +101,18 @@ class ProcessPaymentMain(Utils):
                 for denomination in self.bills_and_coins:
                         subtract_quantity = self.change_denomination[denomination]
                         self.bills_and_coins[denomination] -= subtract_quantity
-                        
+                for denomination in self.bills_and_coins:
+                        add_quantity = self.payment_denomination[denomination]
+                        self.bills_and_coins += add_quantity
                 return denomination
 
                 
         def on_close_window(self, child_window):
                 child_window.destroy()
                 self.root.deiconify() 
-                
+        
         def setup_process_payment_label(self):
+
                 #check inventory label
                 process_payment_image = Image.open("pictures/ProcessPayment.png")
                 process_payment_image = process_payment_image.resize((20, 20), Image.Resampling.LANCZOS)
